@@ -15,6 +15,7 @@ const VoiceConfig = ({ onVoiceSelect }) => {
   const [temperature, setTemperature] = useState(
     selectedVoice.temperature || defaultTemperature
   );
+  const [expanded, setExpanded] = useState(false);
 
   // Update voice config in parent component
   const updateVoiceConfig = (
@@ -68,19 +69,19 @@ const VoiceConfig = ({ onVoiceSelect }) => {
   };
 
   return (
-    <div className="voice-selector bg-background text-foreground p-4 rounded-md">
+    <div className="voice-selector rounded-md">
       <div className="mb-4">
         <label
           htmlFor="voice-select"
-          className="mb-2 block text-lg font-medium"
+          className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Select Voice:
+          Voice
         </label>
         <select
           id="voice-select"
           value={selectedVoice.value}
           onChange={handleVoiceChange}
-          className="w-full rounded px-2 py-1 text-lg bg-background text-foreground border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-md px-3 py-2 text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {VoicesList.map((voice) => (
             <option key={voice.value} value={voice.value}>
@@ -90,40 +91,77 @@ const VoiceConfig = ({ onVoiceSelect }) => {
         </select>
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="voice-speed" className="mb-2 block text-lg font-medium">
-          Speed: {speed.toFixed(1)}
-        </label>
-        <input
-          id="voice-speed"
-          type="range"
-          min="0.0"
-          max="5.0"
-          step="0.1"
-          value={speed}
-          onChange={handleSpeedChange}
-          className="w-full"
-        />
+      <div className="mt-4">
+        <button
+          type="button"
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+        >
+          <span>Advanced settings</span>
+          <svg
+            className={`ml-1 w-4 h-4 transition-transform ${expanded ? "rotate-180" : ""}`}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
       </div>
 
-      <div className="mb-2">
-        <label
-          htmlFor="voice-temperature"
-          className="mb-2 block text-lg font-medium"
-        >
-          Temperature: {temperature.toFixed(1)}
-        </label>
-        <input
-          id="voice-temperature"
-          type="range"
-          min="0.0"
-          max="2.0"
-          step="0.1"
-          value={temperature}
-          onChange={handleTemperatureChange}
-          className="w-full"
-        />
-      </div>
+      {expanded && (
+        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-md">
+          <div className="mb-4">
+            <div className="flex justify-between mb-1">
+              <label htmlFor="voice-speed" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Speed
+              </label>
+              <span className="text-sm text-gray-500 dark:text-gray-400">{speed.toFixed(1)}x</span>
+            </div>
+            <input
+              id="voice-speed"
+              type="range"
+              min="0.5"
+              max="2.0"
+              step="0.1"
+              value={speed}
+              onChange={handleSpeedChange}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-600"
+            />
+            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <span>Slow</span>
+              <span>Fast</span>
+            </div>
+          </div>
+
+          <div className="mb-2">
+            <div className="flex justify-between mb-1">
+              <label htmlFor="voice-temperature" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Temperature
+              </label>
+              <span className="text-sm text-gray-500 dark:text-gray-400">{temperature.toFixed(1)}</span>
+            </div>
+            <input
+              id="voice-temperature"
+              type="range"
+              min="0.0"
+              max="2.0"
+              step="0.1"
+              value={temperature}
+              onChange={handleTemperatureChange}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-600"
+            />
+            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <span>Low</span>
+              <span>High</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

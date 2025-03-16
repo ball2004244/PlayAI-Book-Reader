@@ -3,8 +3,7 @@
 ## Description
 
 Book Reader is a simple web application that allows users to upload and view PDF files from the browser. The user can also listen to the text in the PDF using text-to-speech (TTS) functionality, as well as interact with the content of the PDF.
-
-The project is accessbile on Vercel at ...
+The project is accessible on Vercel at [play-ai-book-reader-inky.vercel.app](https://play-ai-book-reader-inky.vercel.app)
 
 ## Tech Stack
 
@@ -31,15 +30,16 @@ npm run dev
 
 ## TODO
 
-- [X] PDF Upload
-- [X] PDF Display
-- [X] Audio Controls
-    - [X] TTS Play/Pause btns foor current page
-    - [X] Voice Selection Dropdown
-    - [X] Adjust Speed/Temparature
+- [x] PDF Upload
+- [x] PDF Display
+- [x] Audio Controls
+
+  - [x] TTS Play/Pause btns foor current page
+  - [x] Voice Selection Dropdown
+  - [x] Adjust Speed/Temparature
 
 - [ ] Bonus: Voice Chat with current page
-- [ ] Deploy on Vercel
+- [x] Deploy on Vercel
 - [ ] UI/UX Refactoring
 
 ## Time Tracker
@@ -53,6 +53,6 @@ Interval 3: 11.00 PM - 11.30 PM: 30m
 Mar 16, 2025
 Interval 4: 10.45 AM - 11.45 AM: 1h
 Interval 5: 12.00 PM - 1.00 PM: 1h
-Interval 6: 3.00 PM - ...
+Interval 6: 3.00 PM - 4.15 PM: 1h 15m
 
-Elapsed time: 3.5h
+Elapsed time: 4h 45m

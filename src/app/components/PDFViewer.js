@@ -11,6 +11,7 @@ export default function PDFViewer({
 }) {
   const [numPages, setNumPages] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -38,7 +39,6 @@ export default function PDFViewer({
       }
     }
 
-    // Extract text from the current page when page number changes
     if (pdfFile && pageNumber) {
       extractTextFromPage();
     }
@@ -57,59 +57,145 @@ export default function PDFViewer({
     setPageNumber((prevPageNumber) => Math.max(prevPageNumber - 1, 1));
   }
 
-  // If no PDF is uploaded yet
-  if (!pdfFile) {
-    return (
-      <div className="text-center text-gray-500 dark:text-gray-400 mt-8">
-        <p className="text-lg">No PDF uploaded yet</p>
-        <p className="text-sm mt-2">Upload a PDF file to start reading</p>
-      </div>
-    );
+  function zoomIn() {
+    setScale((prev) => Math.min(prev + 0.25, 5));
   }
 
-  return (
-    <div className="flex flex-col items-center w-full">
-      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden w-full max-w-3xl">
-        <Document
-          file={pdfFile}
-          onLoadSuccess={onDocumentLoadSuccess}
-          className="flex justify-center"
-          loading={
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
-            </div>
-          }
-        >
-          <Page
-            pageNumber={pageNumber}
-            renderTextLayer={false}
-            renderAnnotationLayer={false}
-            className="pdf-page"
-          />
-        </Document>
-      </div>
+  function zoomOut() {
+    setScale((prev) => Math.max(prev - 0.25, 0.5));
+  }
 
-      {numPages && (
-        <div className="flex items-center gap-4 mt-6">
-          <button
-            onClick={prevPage}
-            disabled={pageNumber <= 1}
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <p className="text-sm">
-            Page {pageNumber} of {numPages}
-          </p>
-          <button
-            onClick={nextPage}
-            disabled={pageNumber >= numPages}
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md disabled:opacity-50"
-          >
-            Next
-          </button>
+  // Calculate the width based on the scale
+  const baseWidth = Math.min(800, window.innerWidth * 0.8);
+
+  return (
+    <div className="flex flex-col items-center justify-center">
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden w-full h-auto">
+        <div className="border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            {numPages && (
+              <button
+                onClick={prevPage}
+                disabled={pageNumber <= 1}
+                className="p-1 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                title="Previous page"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+            )}
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {numPages
+                ? `Page ${pageNumber} of ${numPages}`
+                : "Loading PDF..."}
+            </div>
+            {numPages && (
+              <button
+                onClick={nextPage}
+                disabled={pageNumber >= numPages}
+                className="p-1 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                title="Next page"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={zoomOut}
+              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              title="Zoom out"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 12H4"
+                />
+              </svg>
+            </button>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {Math.round(scale * 100)}%
+            </span>
+            <button
+              onClick={zoomIn}
+              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              title="Zoom in"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
-      )}
+
+        <div className="min-h-[50vh] max-h-[80vh] w-[45vw] p-4 overflow-auto">
+          <Document
+            file={pdfFile}
+            onLoadSuccess={onDocumentLoadSuccess}
+            loading={
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 dark:border-blue-400"></div>
+              </div>
+            }
+            className="pdf-document w-full flex flex-col justify-center"
+          >
+            <div className="min-w-fit mx-auto">
+              <Page
+                pageNumber={pageNumber}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+                width={baseWidth}
+                scale={scale}
+                className="pdf-page"
+              />
+            </div>
+          </Document>
+        </div>
+      </div>
     </div>
   );
 }
