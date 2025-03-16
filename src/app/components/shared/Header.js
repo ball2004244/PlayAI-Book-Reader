@@ -15,14 +15,18 @@ export default function Header() {
         />
         <h1 className="text-2xl font-bold">Book Reader</h1>
       </div>
-      
+
       <nav>
         <ul className="flex gap-6">
           <li>
-            <Link href="/" className="hover:underline">Home</Link>
+            <Link href="/" className="hover:underline">
+              Home
+            </Link>
           </li>
           <li>
-            <Link href="/about" className="hover:underline">About</Link>
+            <Link href="/about" className="hover:underline">
+              About
+            </Link>
           </li>
         </ul>
       </nav>

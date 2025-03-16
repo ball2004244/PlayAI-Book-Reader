@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import { Header, Footer } from "./components";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,6 +22,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         <div className="grid grid-rows-[auto_1fr_auto] min-h-screen p-8 gap-8 sm:p-12">
           <Header />

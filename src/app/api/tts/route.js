@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
-    const { text, isLastChunk = false } = await request.json();
+    const { text } = await request.json();
     
     if (!text) {
       return NextResponse.json(
@@ -29,12 +29,11 @@ export async function POST(request) {
       responseType: "arraybuffer"
     });
 
-    // Return the audio buffer with proper content type
+    // Return the audio as a streaming response
     return new NextResponse(response.data, {
       status: 200,
       headers: {
         "Content-Type": "audio/mp3",
-        "X-Is-Last-Chunk": isLastChunk.toString()
       }
     });
   } catch (error) {

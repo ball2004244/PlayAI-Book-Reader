@@ -31,16 +31,25 @@ npm run dev
 
 ## TODO
 
-- [ ] PDF Upload
-- [ ] PDF Display
-- [ ] Play/Pause btns for TTS of current page
-- [ ] Bonus: Interact/Chat with current page
+- [X] PDF Upload
+- [X] PDF Display
+- [X] Audio Controls
+    - [X] TTS Play/Pause btns foor current page
+    - [ ] Voice Selection Dropdown
+    - [ ] Adjust Speed/Temparature
+
+- [ ] Bonus: Voice Chat with current page
+- [ ] Deploy on Vercel
+- [ ] UI/UX Refactoring
 
 ## Time Tracker
 
-Start time: 8.00 PM, Mar 15, 2025
+Start time: Mar 15, 2025
 
 Interval 1: 8.00 PM - 8.30 PM: 30m
 Interval 2: 9.00 PM - 9.30 PM: 30m
 Interval 3: 11.00 PM - 11.30 PM: 30m
+
+Mar 16, 2025
+Interval 4: 10.45 AM - ...
 Elapsed time: 1.5h
