@@ -11,7 +11,6 @@ export async function POST(request) {
       return NextResponse.json({ error: "Text is required" }, { status: 400 });
     }
 
-
     if (isChunk) {
       console.log(
         `Processing chunk ${chunkNumber}/${totalChunks} (${text.length} chars)`

@@ -40,19 +40,26 @@ npm run dev
 
 - [ ] Bonus: Voice Chat with current page
 - [x] Deploy on Vercel
-- [ ] UI/UX Refactoring
+- [x] UI/UX Refactoring
 
 ## Time Tracker
 
 Start time: Mar 15, 2025
 
 Interval 1: 8.00 PM - 8.30 PM: 30m
+
 Interval 2: 9.00 PM - 9.30 PM: 30m
+
 Interval 3: 11.00 PM - 11.30 PM: 30m
 
 Mar 16, 2025
+
 Interval 4: 10.45 AM - 11.45 AM: 1h
+
 Interval 5: 12.00 PM - 1.00 PM: 1h
+
 Interval 6: 3.00 PM - 4.15 PM: 1h 15m
 
-Elapsed time: 4h 45m
+Interval 7: 4.30 PM - 5.30 PM: 1h
+
+Elapsed time: 5h 45m

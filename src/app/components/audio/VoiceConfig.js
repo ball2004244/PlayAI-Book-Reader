@@ -99,7 +99,9 @@ const VoiceConfig = ({ onVoiceSelect }) => {
         >
           <span>Advanced settings</span>
           <svg
-            className={`ml-1 w-4 h-4 transition-transform ${expanded ? "rotate-180" : ""}`}
+            className={`ml-1 w-4 h-4 transition-transform ${
+              expanded ? "rotate-180" : ""
+            }`}
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -117,10 +119,15 @@ const VoiceConfig = ({ onVoiceSelect }) => {
         <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-md">
           <div className="mb-4">
             <div className="flex justify-between mb-1">
-              <label htmlFor="voice-speed" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="voice-speed"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Speed
               </label>
-              <span className="text-sm text-gray-500 dark:text-gray-400">{speed.toFixed(1)}x</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {speed.toFixed(1)}x
+              </span>
             </div>
             <input
               id="voice-speed"
@@ -140,10 +147,15 @@ const VoiceConfig = ({ onVoiceSelect }) => {
 
           <div className="mb-2">
             <div className="flex justify-between mb-1">
-              <label htmlFor="voice-temperature" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="voice-temperature"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Temperature
               </label>
-              <span className="text-sm text-gray-500 dark:text-gray-400">{temperature.toFixed(1)}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {temperature.toFixed(1)}
+              </span>
             </div>
             <input
               id="voice-temperature"

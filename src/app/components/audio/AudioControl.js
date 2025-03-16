@@ -110,7 +110,7 @@ export default function AudioControl({ pageText, pdfFile, pageNumber }) {
       // Split text into smaller chunks that can be processed within the 10s limit
       const textChunks = chunkText(pageText);
       const audioChunks = [];
-      
+
       // Set total chunks for progress tracking
       setChunkProgress({ current: 0, total: textChunks.length });
 

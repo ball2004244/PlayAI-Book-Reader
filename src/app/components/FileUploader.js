@@ -23,7 +23,7 @@ export default function FileUploader({ onFileUploaded }) {
   function handleDrop(e) {
     e.preventDefault();
     setIsDragging(false);
-    
+
     if (e.dataTransfer.files.length) {
       const file = e.dataTransfer.files[0];
       processFile(file);
@@ -35,7 +35,7 @@ export default function FileUploader({ onFileUploaded }) {
       setIsUploading(true);
       // Create a URL for the file
       const fileURL = URL.createObjectURL(file);
-      onFileUploaded({...file, url: fileURL});
+      onFileUploaded({ ...file, url: fileURL });
       setIsUploading(false);
     } else if (file) {
       alert("Please upload a PDF file.");
@@ -49,9 +49,11 @@ export default function FileUploader({ onFileUploaded }) {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={`flex items-center justify-center w-full p-6 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200 
-          ${isDragging 
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" 
-            : "border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500"}`}
+          ${
+            isDragging
+              ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+              : "border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500"
+          }`}
       >
         <label
           htmlFor="pdf-upload"
@@ -78,9 +80,7 @@ export default function FileUploader({ onFileUploaded }) {
               {isUploading ? "Uploading..." : "Upload your PDF"}
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-              {isDragging 
-                ? "Drop your file here" 
-                : "Drag your file here"}
+              {isDragging ? "Drop your file here" : "Drag your file here"}
             </p>
           </div>
           <input
