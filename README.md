@@ -40,7 +40,8 @@ npm run dev
 
 - [ ] Bonus: Voice Chat with current page
 - [x] Deploy on Vercel
-- [x] UI/UX Refactoring
+- [X] UI/UX Refactoring
+  - [X] Responsive UI
 
 ## Time Tracker
 
@@ -62,4 +63,6 @@ Interval 6: 3.00 PM - 4.15 PM: 1h 15m
 
 Interval 7: 4.30 PM - 5.30 PM: 1h
 
-Elapsed time: 5h 45m
+Interval 8: 6.30 PM - 7.00 PM: 30m
+
+Elapsed time: 6h 15m

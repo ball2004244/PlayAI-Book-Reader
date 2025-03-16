@@ -12,17 +12,17 @@ export default function Home() {
   }
 
   return (
-    <div className="container mx-auto px-4 max-w-6xl">
+    <div className="container mx-auto px-2 sm:px-4 max-w-6xl">
       {!pdfFile ? (
-        <div className="flex flex-col items-center justify-center min-h-[60vh]">
-          <h2 className="text-2xl font-semibold mb-8 text-center">
+        <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-center">
             Upload a PDF to get started
           </h2>
           <FileUploader onFileUploaded={handleFileUploaded} />
         </div>
       ) : (
-        <div className="grid md:grid-cols-[2fr_1fr] gap-8">
-          <div className="pdf-container">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 sm:gap-6 md:gap-8">
+          <div className="pdf-container order-2 md:order-1">
             <PDFViewer
               pdfFile={pdfFile}
               pageNumber={pageNumber}
@@ -31,9 +31,9 @@ export default function Home() {
             />
           </div>
 
-          <div className="controls-container self-start">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h3 className="text-xl font-medium mb-4 text-gray-800 dark:text-gray-200">
+          <div className="controls-container self-start order-1 md:order-2">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-medium mb-4 text-gray-800 dark:text-gray-200">
                 Audio Controls
               </h3>
               <AudioControl
@@ -43,7 +43,7 @@ export default function Home() {
               />
             </div>
 
-            <div className="mt-6 flex justify-center">
+            <div className="mt-4 sm:mt-6 flex justify-center">
               <button
                 onClick={() => setPdfFile(null)}
                 className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center"

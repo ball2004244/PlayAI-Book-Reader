@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <div className="grid grid-rows-[auto_1fr_auto] min-h-screen p-8 gap-8 sm:p-12">
+        <div className="grid grid-rows-[auto_1fr_auto] min-h-screen p-4 gap-4 sm:p-6 sm:gap-6 md:p-8 md:gap-8">
           <Header />
           <main className="flex flex-col items-center justify-center w-full">
             {children}

@@ -65,12 +65,12 @@ export default function PDFViewer({
     setScale((prev) => Math.max(prev - 0.25, 0.5));
   }
 
-  // Calculate the width based on the scale
-  const baseWidth = Math.min(800, window.innerWidth * 0.8);
+  // Calculate the width based on the scale and screen size
+  const baseWidth = Math.min(600, window.innerWidth * 0.8);
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden w-full h-auto">
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden w-full">
         <div className="border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             {numPages && (
@@ -172,7 +172,7 @@ export default function PDFViewer({
           </div>
         </div>
 
-        <div className="min-h-[50vh] max-h-[80vh] w-[40vw] p-4 overflow-auto">
+        <div className="h-[70vh] w-fit mx-auto max-w-full sm:max-w-[90vw] md:max-w-[60vw] lg:max-w-[60vw] overflow-auto justify-center flex">
           <Document
             file={pdfFile}
             onLoadSuccess={onDocumentLoadSuccess}
@@ -181,18 +181,16 @@ export default function PDFViewer({
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 dark:border-blue-400"></div>
               </div>
             }
-            className="pdf-document w-full flex flex-col justify-center"
+            className="pdf-document w-full flex flex-col justify-center my-auto"
           >
-            <div className="min-w-fit mx-auto">
-              <Page
-                pageNumber={pageNumber}
-                renderTextLayer={false}
-                renderAnnotationLayer={false}
-                width={baseWidth}
-                scale={scale}
-                className="pdf-page"
-              />
-            </div>
+            <Page
+              pageNumber={pageNumber}
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
+              width={baseWidth}
+              scale={scale}
+              className="pdf-page mx-auto"
+            />
           </Document>
         </div>
       </div>
