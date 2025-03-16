@@ -35,8 +35,8 @@ npm run dev
 - [X] PDF Display
 - [X] Audio Controls
     - [X] TTS Play/Pause btns foor current page
-    - [ ] Voice Selection Dropdown
-    - [ ] Adjust Speed/Temparature
+    - [X] Voice Selection Dropdown
+    - [X] Adjust Speed/Temparature
 
 - [ ] Bonus: Voice Chat with current page
 - [ ] Deploy on Vercel
@@ -51,5 +51,7 @@ Interval 2: 9.00 PM - 9.30 PM: 30m
 Interval 3: 11.00 PM - 11.30 PM: 30m
 
 Mar 16, 2025
-Interval 4: 10.45 AM - ...
-Elapsed time: 1.5h
+Interval 4: 10.45 AM - 11.45 AM: 1h
+Interval 5: 12.00 PM - ...
+
+Elapsed time: 2.5h

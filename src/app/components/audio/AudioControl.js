@@ -1,11 +1,18 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import AudioBtns from "./AudioBtns";
+import VoiceConfig from "./VoiceConfig";
+import { defaultVoice } from "@/app/constants";
 
 export default function AudioControl({ pageText, pdfFile, pageNumber }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [voiceConfig, setVoiceConfig] = useState(defaultVoice);
+  const [voiceSpeed, setVoiceSpeed] = useState(1.0);
+  const [voiceTemperature, setVoiceTemperature] = useState(null);
+
   const audioRef = useRef(null);
   // Cache to store audio URLs for each page
   const audioCache = useRef({});
@@ -58,7 +65,9 @@ export default function AudioControl({ pageText, pdfFile, pageNumber }) {
     }
 
     // Create a unique key for this page's text
-    const cacheKey = `${pdfFile?.name || "pdf"}-page-${pageNumber}`;
+    const cacheKey = `${pdfFile?.name || "pdf"}-page-${pageNumber}-voice-${
+      voiceConfig.name
+    }`;
 
     // Check if we already have audio for this page
     if (audioCache.current[cacheKey]) {
@@ -73,13 +82,15 @@ export default function AudioControl({ pageText, pdfFile, pageNumber }) {
     try {
       setIsProcessing(true);
 
-      // Send the entire text to the API
       const response = await fetch("/api/tts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: pageText }),
+        body: JSON.stringify({
+          text: pageText,
+          voiceConfig: voiceConfig,
+        }),
       });
 
       if (!response.ok) {
@@ -126,53 +137,22 @@ export default function AudioControl({ pageText, pdfFile, pageNumber }) {
 
   return (
     <div className="mt-2">
-      {isProcessing ? (
-        <button
-          disabled
-          className="px-4 py-2 bg-yellow-500 text-white rounded-md flex items-center justify-center"
-        >
-          <span className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-          Processing Audio...
-        </button>
-      ) : isSpeaking ? (
-        <div className="flex gap-2">
-          <button
-            onClick={pauseSpeaking}
-            className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
-          >
-            Pause
-          </button>
-          <button
-            onClick={stopSpeaking}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-          >
-            Stop
-          </button>
-        </div>
-      ) : isPaused ? (
-        <div className="flex gap-2">
-          <button
-            onClick={speakText}
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-          >
-            Resume
-          </button>
-          <button
-            onClick={stopSpeaking}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-          >
-            Stop
-          </button>
-        </div>
-      ) : (
-        <button
-          onClick={speakText}
-          disabled={!pageText}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
-        >
-          Read Aloud
-        </button>
-      )}
+      <AudioBtns
+        isProcessing={isProcessing}
+        isSpeaking={isSpeaking}
+        isPaused={isPaused}
+        pageText={pageText}
+        onPlay={speakText}
+        onPause={pauseSpeaking}
+        onStop={stopSpeaking}
+      />
+      <div className="mt-2">
+        <VoiceConfig
+          onVoiceSelect={(selectedVoiceConfig) => {
+            setVoiceConfig(selectedVoiceConfig);
+          }}
+        />
+      </div>
     </div>
   );
 }

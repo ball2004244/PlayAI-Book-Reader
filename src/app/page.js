@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { PDFViewer, AudioControl, FileUploader } from "./components";
+import { PDFViewer, AudioControl, FileUploader } from "@/app/components";
 
 export default function Home() {
   const [pdfFile, setPdfFile] = useState(null);
