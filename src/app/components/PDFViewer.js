@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 
 export default function PDFViewer({ pdfFile }) {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [pageText, setPageText] = useState("");
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -19,16 +22,85 @@ export default function PDFViewer({ pdfFile }) {
     }
   }, [pdfFile]);
 
+  useEffect(() => {
+    // Extract text from the current page when page number changes
+    if (pdfFile && pageNumber) {
+      extractTextFromPage();
+    }
+  }, [pageNumber, pdfFile]);
+
+  async function extractTextFromPage() {
+    if (!pdfFile) return;
+    
+    try {
+      const pdf = await pdfjs.getDocument(pdfFile).promise;
+      const page = await pdf.getPage(pageNumber);
+      const textContent = await page.getTextContent();
+      const text = textContent.items.map(item => item.str).join(' ');
+      setPageText(text);
+    } catch (error) {
+      console.error("Error extracting text from PDF:", error);
+    }
+  }
+
+  async function speakText() {
+    if (!pageText || isSpeaking) return;
+    
+    setIsSpeaking(true);
+    
+    try {
+      // Call our internal API route
+      const response = await fetch('/api/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: pageText })
+      });
+      
+      if (!response.ok) {
+        throw new Error('TTS API request failed');
+      }
+      
+      // Create blob from response and play audio
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      
+      audioRef.current = new Audio(audioUrl);
+      audioRef.current.addEventListener('ended', () => {
+        setIsSpeaking(false);
+      });
+      audioRef.current.play();
+    } catch (error) {
+      console.error("Error with TTS:", error);
+      setIsSpeaking(false);
+    }
+  }
+
+  function stopSpeaking() {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+      setIsSpeaking(false);
+    }
+  }
+
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
     setIsLoading(false);
   }
 
   function nextPage() {
+    stopSpeaking();
     setPageNumber((prevPageNumber) => Math.min(prevPageNumber + 1, numPages));
   }
 
   function prevPage() {
+    stopSpeaking();
     setPageNumber((prevPageNumber) => Math.max(prevPageNumber - 1, 1));
   }
 
@@ -64,24 +136,44 @@ export default function PDFViewer({ pdfFile }) {
       </div>
 
       {numPages && (
-        <div className="flex items-center gap-4 mt-6">
-          <button
-            onClick={prevPage}
-            disabled={pageNumber <= 1}
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <p className="text-sm">
-            Page {pageNumber} of {numPages}
-          </p>
-          <button
-            onClick={nextPage}
-            disabled={pageNumber >= numPages}
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md disabled:opacity-50"
-          >
-            Next
-          </button>
+        <div className="flex flex-col items-center gap-4 mt-6">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={prevPage}
+              disabled={pageNumber <= 1}
+              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <p className="text-sm">
+              Page {pageNumber} of {numPages}
+            </p>
+            <button
+              onClick={nextPage}
+              disabled={pageNumber >= numPages}
+              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+          
+          <div className="mt-2">
+            {isSpeaking ? (
+              <button
+                onClick={stopSpeaking}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              >
+                Stop Reading
+              </button>
+            ) : (
+              <button
+                onClick={speakText}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              >
+                Read Aloud
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>

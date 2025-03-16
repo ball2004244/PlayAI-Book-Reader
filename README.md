@@ -15,7 +15,7 @@ The project is accessbile on Vercel at ...
 
 ## For Development
 
-Copy the `.env.example` file to `.env` and fill in the required environment variables.
+Copy the `.env.example` file to `.env.local` and fill in the required environment variables.
 
 Then, install the dependencies:
 
@@ -39,4 +39,8 @@ npm run dev
 ## Time Tracker
 
 Start time: 8.00 PM, Mar 15, 2025
-Elapsed time: 30m
+
+Interval 1: 8.00 PM - 8.30 PM: 30m
+Interval 2: 9.00 PM - 9.30 PM: 30m
+
+Elapsed time: 1h
