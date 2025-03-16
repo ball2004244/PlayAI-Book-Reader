@@ -52,6 +52,7 @@ Interval 3: 11.00 PM - 11.30 PM: 30m
 
 Mar 16, 2025
 Interval 4: 10.45 AM - 11.45 AM: 1h
-Interval 5: 12.00 PM - ...
+Interval 5: 12.00 PM - 1.00 PM: 1h
+Interval 6: 3.00 PM - ...
 
-Elapsed time: 2.5h
+Elapsed time: 3.5h

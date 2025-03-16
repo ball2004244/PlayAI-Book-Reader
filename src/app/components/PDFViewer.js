@@ -24,25 +24,25 @@ export default function PDFViewer({
   }, [pdfFile, setPageNumber]);
 
   useEffect(() => {
+    async function extractTextFromPage() {
+      if (!pdfFile) return;
+
+      try {
+        const pdf = await pdfjs.getDocument(pdfFile).promise;
+        const page = await pdf.getPage(pageNumber);
+        const textContent = await page.getTextContent();
+        const text = textContent.items.map((item) => item.str).join(" ");
+        setPageText(text);
+      } catch (error) {
+        console.error("Error extracting text from PDF:", error);
+      }
+    }
+
     // Extract text from the current page when page number changes
     if (pdfFile && pageNumber) {
       extractTextFromPage();
     }
-  }, [pageNumber, pdfFile]);
-
-  async function extractTextFromPage() {
-    if (!pdfFile) return;
-
-    try {
-      const pdf = await pdfjs.getDocument(pdfFile).promise;
-      const page = await pdf.getPage(pageNumber);
-      const textContent = await page.getTextContent();
-      const text = textContent.items.map((item) => item.str).join(" ");
-      setPageText(text);
-    } catch (error) {
-      console.error("Error extracting text from PDF:", error);
-    }
-  }
+  }, [pageNumber, pdfFile, setPageText]);
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);

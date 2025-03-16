@@ -5,6 +5,30 @@ import AudioBtns from "./AudioBtns";
 import VoiceConfig from "./VoiceConfig";
 import { defaultVoice } from "@/app/constants";
 
+function chunkText(text, maxLength = 500) {
+  // Split a text into chunks
+  // Split by sentences to avoid cutting in the middle of a sentence
+  const sentences = text.match(/[^.!?]+[.!?]+|\s*\n\s*|\s*$/g) || [];
+
+  const chunks = [];
+  let currentChunk = "";
+
+  for (const sentence of sentences) {
+    if (currentChunk.length + sentence.length > maxLength) {
+      chunks.push(currentChunk);
+      currentChunk = sentence;
+    } else {
+      currentChunk += sentence;
+    }
+  }
+
+  if (currentChunk) {
+    chunks.push(currentChunk);
+  }
+
+  return chunks;
+}
+
 export default function AudioControl({ pageText, pdfFile, pageNumber }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -12,6 +36,7 @@ export default function AudioControl({ pageText, pdfFile, pageNumber }) {
   const [voiceConfig, setVoiceConfig] = useState(defaultVoice);
   const [voiceSpeed, setVoiceSpeed] = useState(1.0);
   const [voiceTemperature, setVoiceTemperature] = useState(null);
+  const [chunkProgress, setChunkProgress] = useState({ current: 0, total: 0 }); // Add progress tracking
 
   const audioRef = useRef(null);
   // Cache to store audio URLs for each page
@@ -82,26 +107,54 @@ export default function AudioControl({ pageText, pdfFile, pageNumber }) {
     try {
       setIsProcessing(true);
 
-      const response = await fetch("/api/tts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text: pageText,
-          voiceConfig: voiceConfig,
-        }),
-      });
+      // Split text into smaller chunks that can be processed within the 10s limit
+      const textChunks = chunkText(pageText);
+      const audioChunks = [];
+      
+      // Set total chunks for progress tracking
+      setChunkProgress({ current: 0, total: textChunks.length });
 
-      if (!response.ok) {
-        throw new Error("TTS API request failed");
+      // Process each chunk sequentially
+      for (let i = 0; i < textChunks.length; i++) {
+        const chunk = textChunks[i];
+
+        // Update progress
+        setChunkProgress({ current: i + 1, total: textChunks.length });
+
+        // Update processing message to show progress
+        setIsProcessing(true);
+
+        const response = await fetch("/api/tts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: chunk,
+            voiceConfig: voiceConfig,
+            isChunk: true,
+            chunkNumber: i + 1,
+            totalChunks: textChunks.length,
+          }),
+          signal: AbortSignal.timeout(15000),
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `TTS API request failed for chunk ${i + 1}: ${response.statusText}`
+          );
+        }
+
+        // Get the audio as a blob
+        const audioBlob = await response.blob();
+        audioChunks.push(audioBlob);
       }
 
-      // Get the audio as a blob
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
+      // Combine all audio chunks into a single audio file
+      const combinedBlob = new Blob(audioChunks, { type: "audio/mpeg" });
+      const audioUrl = URL.createObjectURL(combinedBlob);
 
-      // Cache the audio URL for this page
+      // Cache the combined audio URL for this page
       audioCache.current[cacheKey] = audioUrl;
 
       // Set the audio source and play
@@ -112,8 +165,13 @@ export default function AudioControl({ pageText, pdfFile, pageNumber }) {
       setIsPaused(false);
     } catch (error) {
       console.error("Error with TTS:", error);
+      // Provide user feedback
+      alert(
+        "There was an error generating audio. Please try again with a smaller text selection."
+      );
     } finally {
       setIsProcessing(false);
+      setChunkProgress({ current: 0, total: 0 }); // Reset progress
     }
   }
 
@@ -145,6 +203,7 @@ export default function AudioControl({ pageText, pdfFile, pageNumber }) {
         onPlay={speakText}
         onPause={pauseSpeaking}
         onStop={stopSpeaking}
+        progress={chunkProgress}
       />
       <div className="mt-2">
         <VoiceConfig

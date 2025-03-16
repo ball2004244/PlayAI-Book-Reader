@@ -4,15 +4,27 @@ import { defaultSpeed, defaultTemperature } from "@/app/constants";
 
 export async function POST(request) {
   try {
-    const { text, voiceConfig } = await request.json();
+    const { text, voiceConfig, isChunk, chunkNumber, totalChunks } =
+      await request.json();
 
     if (!text) {
       return NextResponse.json({ error: "Text is required" }, { status: 400 });
     }
 
+
+    if (isChunk) {
+      console.log(
+        `Processing chunk ${chunkNumber}/${totalChunks} (${text.length} chars)`
+      );
+    }
+
     const voice = voiceConfig.value;
-    const speed = voiceConfig.speed !== undefined ? voiceConfig.speed : defaultSpeed;
-    const temperature = voiceConfig.temperature !== undefined ? voiceConfig.temperature : defaultTemperature;
+    const speed =
+      voiceConfig.speed !== undefined ? voiceConfig.speed : defaultSpeed;
+    const temperature =
+      voiceConfig.temperature !== undefined
+        ? voiceConfig.temperature
+        : defaultTemperature;
 
     const response = await axios({
       method: "post",
@@ -42,9 +54,19 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Error with TTS API:", error);
-    console.log("Error details:", error.response?.data);
+
+    if (error.code === "ECONNABORTED") {
+      return NextResponse.json(
+        { error: "API request timed out. Try with shorter text." },
+        { status: 504 }
+      );
+    }
+
     return NextResponse.json(
-      { error: "Failed to generate speech" },
+      {
+        error:
+          "Failed to generate speech: " + (error.message || "Unknown error"),
+      },
       { status: 500 }
     );
   }
