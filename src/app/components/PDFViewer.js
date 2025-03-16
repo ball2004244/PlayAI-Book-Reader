@@ -9,6 +9,7 @@ export default function PDFViewer({ pdfFile }) {
   const [isLoading, setIsLoading] = useState(true);
   const [pageText, setPageText] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [shouldContinue, setShouldContinue] = useState(true);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -47,46 +48,105 @@ export default function PDFViewer({ pdfFile }) {
     if (!pageText || isSpeaking) return;
     
     setIsSpeaking(true);
+    setShouldContinue(true);
     
     try {
-      // Call our internal API route
-      const response = await fetch('/api/tts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: pageText })
-      });
-      
-      if (!response.ok) {
-        throw new Error('TTS API request failed');
+      // Split text into manageable chunks (sentences or paragraphs)
+      const chunks = pageText.match(/[^\.!\?]+[\.!\?]+/g) || [pageText];
+      const MAX_CHUNK_SIZE = 100;
+      const processedChunks = [];
+
+      // Combine sentences into chunks that don't exceed MAX_CHUNK_SIZE
+      let currentChunk = "";
+      for (const sentence of chunks) {
+        if (currentChunk.length + sentence.length > MAX_CHUNK_SIZE) {
+          processedChunks.push(currentChunk);
+          currentChunk = sentence;
+        } else {
+          currentChunk += sentence;
+        }
       }
-      
-      // Create blob from response and play audio
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      
-      if (audioRef.current) {
-        audioRef.current.pause();
+      if (currentChunk) processedChunks.push(currentChunk);
+  
+      // Create audio element if it doesn't exist
+      if (!audioRef.current) {
+        audioRef.current = new Audio();
+        audioRef.current.onended = () => {
+          // When one chunk finishes playing, play the next one
+          playNextChunk();
+        };
       }
+  
+      let currentIndex = 0;
       
-      audioRef.current = new Audio(audioUrl);
-      audioRef.current.addEventListener('ended', () => {
-        setIsSpeaking(false);
-      });
-      audioRef.current.play();
+      const playNextChunk = async () => {
+        if (!shouldContinue || currentIndex >= processedChunks.length) {
+          setIsSpeaking(false);
+          return;
+        }
+        
+        const isLastChunk = currentIndex === processedChunks.length - 1;
+        
+        try {
+          const response = await fetch('/api/tts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              text: processedChunks[currentIndex],
+              isLastChunk
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('TTS API request failed');
+          }
+          
+          // Create blob from response and play audio
+          const audioBlob = await response.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+          
+          // Set the new audio source
+          audioRef.current.src = audioUrl;
+          audioRef.current.play();
+          
+          // Increment index for the next chunk
+          currentIndex++;
+          
+          // If this is the last chunk, the onended event will stop the speaking
+          if (isLastChunk) {
+            audioRef.current.onended = () => {
+              setIsSpeaking(false);
+              setShouldContinue(true);
+            };
+          }
+        } catch (error) {
+          console.error("Error processing audio chunk:", error);
+          setIsSpeaking(false);
+        }
+      };
+      
+      // Start playing the first chunk
+      playNextChunk();
+      
     } catch (error) {
       console.error("Error with TTS:", error);
       setIsSpeaking(false);
     }
   }
-
   function stopSpeaking() {
+    setShouldContinue(false);
+  
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current = null;
-      setIsSpeaking(false);
+      if (audioRef.current.src) {
+        URL.revokeObjectURL(audioRef.current.src);
+      }
+      audioRef.current.src = "";
     }
+    
+    setIsSpeaking(false);
   }
 
   function onDocumentLoadSuccess({ numPages }) {

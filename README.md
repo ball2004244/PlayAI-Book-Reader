@@ -42,5 +42,5 @@ Start time: 8.00 PM, Mar 15, 2025
 
 Interval 1: 8.00 PM - 8.30 PM: 30m
 Interval 2: 9.00 PM - 9.30 PM: 30m
-
-Elapsed time: 1h
+Interval 3: 11.00 PM - 11.30 PM: 30m
+Elapsed time: 1.5h

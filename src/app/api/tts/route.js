@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
-    const { text } = await request.json();
+    const { text, isLastChunk = false } = await request.json();
     
     if (!text) {
       return NextResponse.json(
@@ -11,7 +11,7 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-;
+
     const response = await axios({
       method: "post",
       url: `${process.env.PLAYAI_API_URL}/tts/stream`,
@@ -33,7 +33,8 @@ export async function POST(request) {
     return new NextResponse(response.data, {
       status: 200,
       headers: {
-        "Content-Type": "audio/mp3"
+        "Content-Type": "audio/mp3",
+        "X-Is-Last-Chunk": isLastChunk.toString()
       }
     });
   } catch (error) {
