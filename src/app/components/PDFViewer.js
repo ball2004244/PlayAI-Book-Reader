@@ -172,7 +172,7 @@ export default function PDFViewer({
           </div>
         </div>
 
-        <div className="min-h-[50vh] max-h-[80vh] w-[45vw] p-4 overflow-auto">
+        <div className="min-h-[50vh] max-h-[80vh] w-[40vw] p-4 overflow-auto">
           <Document
             file={pdfFile}
             onLoadSuccess={onDocumentLoadSuccess}
