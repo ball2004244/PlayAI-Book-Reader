@@ -26,7 +26,7 @@ export async function POST(request) {
         : defaultTemperature;
 
     const response = await axios({
-      method: "post",
+      method: "POST",
       url: `${process.env.PLAYAI_API_URL}/tts/stream`,
       headers: {
         "Content-Type": "application/json",

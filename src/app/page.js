@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { PDFViewer, AudioControl, FileUploader } from "@/app/components";
+import ChatBot from "./chat/ChatBot";
 
 export default function Home() {
   const [pdfFile, setPdfFile] = useState(null);
@@ -31,7 +32,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="controls-container self-start order-1 md:order-2">
+          <div className="controls-container self-start order-1 md:order-2 space-y-4">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
               <h3 className="text-lg sm:text-xl font-medium mb-4 text-gray-800 dark:text-gray-200">
                 Audio Controls
@@ -42,6 +43,8 @@ export default function Home() {
                 pageNumber={pageNumber}
               />
             </div>
+
+            <ChatBot />
 
             <div className="mt-4 sm:mt-6 flex justify-center">
               <button
