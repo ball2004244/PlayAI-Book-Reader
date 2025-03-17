@@ -12,6 +12,12 @@ The project is accessible on Vercel at [play-ai-book-reader-inky.vercel.app](htt
 - Tailwind CSS
 - PlayAI API
 
+## Features
+- Upload & View PDF files: Users can upload PDF files from their local machine. The application then renders the uploaded PDF files in the browser. Support zooming and page navigation.
+- Text-to-speech: Allow users to listen to the text in the PDF. The text is sent from frontend to backend in batches, then communicated to the PlayAI API for TTS. The audio is streamed back to the frontend and played in the browser.
+- Voice Control: Users can select different voices and adjust the speed and temperature of the TTS. This allows for a more personalized experience.
+- Responsive Design: The application is designed to be responsive and works well on different screen sizes.
+
 ## For Development
 
 Copy the `.env.example` file to `.env.local` and fill in the required environment variables.
@@ -40,8 +46,8 @@ npm run dev
 
 - [ ] Bonus: Voice Chat with current page
 - [x] Deploy on Vercel
-- [X] UI/UX Refactoring
-  - [X] Responsive UI
+- [x] UI/UX Refactoring
+  - [x] Responsive UI
 
 ## Time Tracker
 
@@ -65,4 +71,8 @@ Interval 7: 4.30 PM - 5.30 PM: 1h
 
 Interval 8: 6.30 PM - 7.00 PM: 30m
 
-Elapsed time: 6h 15m
+Interval 9: 7.30 PM - 8.30 PM: 1h
+
+Interval 10: 9.00 PM - 9.30 PM: 30m
+
+Elapsed time: 7h 45m
